@@ -3,152 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ProTrader Elite | النسخة الشاملة</title>
+    <title>ProTrader Elite | النسخة الاحترافية</title>
     <style>
-        :root { --gold: #FFD700; --bg: #050505; --card: #121212; --text: #ffffff; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        
+        :root { --gold: #FFD700; --bg: #050505; --card: #121212; --text: #ffffff; --red: #ff4d4d; --green: #00ff88; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow: hidden; }
+
+        /* التنبيهات */
         #toast { 
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(20, 20, 20, 0.95); border: 1px solid var(--gold);
             padding: 12px 25px; border-radius: 50px; display: none; z-index: 10000;
-            color: var(--gold); font-size: 14px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            color: var(--gold); font-size: 14px; text-align: center;
         }
 
-        #back-btn { 
-            position: fixed; top: 15px; left: 15px; background: var(--gold); color: #000;
-            padding: 8px 18px; border-radius: 12px; font-weight: bold; cursor: pointer;
-            display: none; z-index: 9999;
+        /* القائمة السفلية للتحكم */
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: rgba(10, 10, 10, 0.9);
+            display: flex; justify-content: space-around; padding: 15px 0;
+            border-top: 1px solid #222; z-index: 9000; backdrop-filter: blur(10px);
         }
+        .nav-item { text-align: center; cursor: pointer; font-size: 12px; color: #888; }
+        .nav-item.active { color: var(--gold); }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 5px; }
 
-        .screen { display: none; min-height: 100vh; width: 100%; padding: 20px; box-sizing: border-box; }
-        .active-screen { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .screen { display: none; height: 100vh; width: 100%; position: absolute; top: 0; background: var(--bg); overflow-y: auto; padding-bottom: 80px; }
+        .active-screen { display: block; }
 
-        /* الدخول والتسجيل */
-        .auth-card { max-width: 400px; margin: 60px auto; text-align: center; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #222; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 10px; outline: none; }
+        /* الشاشات المالية والإدارية */
+        .container { padding: 20px; max-width: 500px; margin: auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
         .btn-gold { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* خيار الإيداع */
+        .wallet-addr { background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px dashed var(--gold); display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .warning { color: var(--red); font-size: 11px; margin-top: 5px; }
 
-        /* القائمة الرئيسية المحدثة بجميع الأزرار */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .menu-item { background: var(--card); padding: 25px 5px; border-radius: 15px; text-align: center; border: 1px solid #222; cursor: pointer; transition: 0.2s; font-size: 14px; }
-        .menu-item:active { transform: scale(0.95); background: #1a1a1a; }
-        .item-icon { font-size: 24px; display: block; margin-bottom: 8px; }
+        /* سجل الصفقات */
+        .tab-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab { flex: 1; padding: 10px; text-align: center; background: #1a1a1a; border-radius: 8px; cursor: pointer; }
+        .tab.active { background: var(--gold); color: #000; }
+        .history-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #222; font-size: 13px; }
 
-        /* المحفظة */
-        .wallet-card { background: linear-gradient(45deg, #121212, #1a1a1a); padding: 20px; border-radius: 20px; border: 1px solid var(--gold); text-align: center; margin-bottom: 20px; }
+        /* الدخول */
+        #screen-login { z-index: 10001; background: var(--bg); }
     </style>
 </head>
 <body>
 
     <div id="toast"></div>
-    <div id="back-btn" onclick="goTo('home')">← رجوع</div>
 
-    <div id="screen-login" class="screen active-screen">
-        <div class="auth-card">
+    <div id="screen-login" class="screen">
+        <div class="container" style="margin-top:100px; text-align:center;">
             <h1 style="color:var(--gold);">PRO TRADER</h1>
-            <input type="email" id="l-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="l-pass" placeholder="كلمة المرور">
-            <button class="btn-gold" onclick="handleLogin()">دخول</button>
-            <p style="margin-top:20px; font-size:13px; color:#888;">
-                جديد هنا؟ <span onclick="goTo('signup')" style="color:var(--gold); cursor:pointer;">إنشاء حساب</span>
-            </p>
+            <input type="email" id="email" placeholder="البريد الإلكتروني" style="width:100%; padding:15px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:10px;">
+            <input type="password" id="pass" placeholder="كلمة المرور" style="width:100%; padding:15px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:10px;">
+            <button class="btn-gold" onclick="login()">تسجيل دخول</button>
+            <p style="font-size:12px; color:#666; margin-top:20px;">سيتم حفظ دخولك تلقائياً</p>
         </div>
     </div>
 
-    <div id="screen-signup" class="screen">
-        <div class="auth-card">
-            <h2 style="color:var(--gold);">حساب جديد</h2>
-            <input type="text" placeholder="الاسم الكامل">
-            <input type="email" id="r-email" placeholder="البريد الإلكتروني">
-            <input type="password" placeholder="كلمة المرور">
-            <button class="btn-gold" onclick="handleSignup()">تأكيد</button>
-            <p onclick="goTo('login')" style="margin-top:20px; color:var(--gold); cursor:pointer;">لديك حساب؟</p>
-        </div>
-    </div>
-
-    <div id="screen-home" class="screen">
-        <div class="wallet-card">
-            <p style="margin:0; color:#aaa; font-size:12px;">إجمالي الرصيد</p>
-            <h2 style="margin:10px 0; color:var(--gold);">$5,420.00</h2>
-        </div>
-        
-        <div class="menu-grid">
-            <div class="menu-item" onclick="goTo('chart')"><span class="item-icon">📉</span>تحليل الشموع</div>
-            <div class="menu-item" onclick="goTo('calc')"><span class="item-icon">🧮</span>حاسبة اللوت</div>
-            <div class="menu-item" onclick="goTo('deposit')"><span class="item-icon">💰</span>إيداع أموال</div>
-            <div class="menu-item" onclick="goTo('withdraw')"><span class="item-icon">📤</span>سحب أرباح</div>
-            <div class="menu-item" onclick="goTo('sig')"><span class="item-icon">🔔</span>التوصيات</div>
-            <div class="menu-item" onclick="goTo('history')"><span class="item-icon">📜</span>سجل العمليات</div>
-            <div class="menu-item" onclick="goTo('profile')"><span class="item-icon">👤</span>الملف الشخصي</div>
-            <div class="menu-item" onclick="goTo('sup')"><span class="item-icon">🎧</span>الدعم الفني</div>
-        </div>
-    </div>
-
-    <div id="screen-chart" class="screen" style="padding:0;">
+    <div id="screen-main" class="screen active-screen" style="padding:0; overflow:hidden;">
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=1&theme=dark" width="100%" height="100%" frameborder="0"></iframe>
     </div>
 
-    <div id="screen-calc" class="screen">
-        <h3>حاسبة إدارة المخاطر</h3>
-        <input type="number" id="bal" placeholder="الرصيد $" oninput="doCalc()">
-        <input type="number" id="risk" placeholder="المخاطرة %" oninput="doCalc()">
-        <h1 id="res" style="text-align:center; color:var(--gold); margin-top:30px;">$0.00</h1>
+    <div id="screen-profile" class="screen">
+        <div class="container">
+            <h2 style="color:var(--gold);">الملف الشخصي</h2>
+            
+            <div class="card" onclick="openSection('deposit')">💰 إيداع أموال</div>
+            <div class="card" onclick="openSection('withdraw')">📤 سحب أرباح</div>
+            <div class="card" onclick="openSection('kyc')">🆔 تأكيد الهوية (KYC)</div>
+            <div class="card" onclick="openSection('history')">📜 السجل العام</div>
+            <div class="card" onclick="openSection('support')">🎧 الدعم الفني</div>
+            <button class="btn-gold" style="background:var(--red); color:white;" onclick="logout()">تسجيل خروج</button>
+        </div>
     </div>
 
     <div id="screen-deposit" class="screen">
-        <h3>قسم الإيداع</h3>
-        <div class="auth-card">
-            <p>اختر وسيلة الإيداع (USDT - BTC - Visa)</p>
-            <button class="btn-gold">بدء عملية الإيداع</button>
+        <div class="container">
+            <h3 onclick="goTo('profile')">← عودة</h3>
+            <div class="card">
+                <p>عنوان محفظة USDT (TRC20)</p>
+                <div class="wallet-addr">
+                    <span id="addr">TYv2p9M...8uW2qS</span>
+                    <button onclick="copyAddr()" style="background:var(--gold); border:none; padding:5px; border-radius:5px;">نسخ</button>
+                </div>
+                <p class="warning">⚠️ تحذير: أي إرسال لعنوان خطأ أو شبكة مختلفة سيؤدي لفقدان أموالك نهائياً.</p>
+            </div>
         </div>
     </div>
 
-    <div id="screen-withdraw" class="screen">
-        <h3>طلب سحب أرباح</h3>
-        <input type="number" placeholder="المبلغ المطلوب سحبه">
-        <button class="btn-gold">تأكيد السحب</button>
-    </div>
-
-    <div id="screen-sig" class="screen">
-        <h3>التوصيات الحية</h3>
-        <div style="background:#1a1a1a; padding:15px; border-radius:12px; border-right:4px solid var(--gold);">
-            <b>XAUUSD - شراء</b><br><small>الهدف: 2380 | الستوب: 2340</small>
+    <div id="screen-kyc" class="screen">
+        <div class="container">
+            <h3 onclick="goTo('profile')">← عودة</h3>
+            <div class="card">
+                <h4>توثيق الحساب</h4>
+                <p style="font-size:12px; color:#aaa;">يرجى رفع صور واضحة للهوية الأصلية</p>
+                <label>صورة الهوية (الوجه الأمامي):</label>
+                <input type="file" accept="image/*" class="btn-gold" style="background:#1a1a1a;">
+                <label>صورة الهوية (الوجه الخلفي):</label>
+                <input type="file" accept="image/*" class="btn-gold" style="background:#1a1a1a;">
+                <button class="btn-gold" onclick="notify('جاري مراجعة الطلب...')">إرسال للتدقيق</button>
+            </div>
         </div>
     </div>
 
-    <div id="screen-sup" class="screen">
-        <h3>الدعم الفني</h3>
-        <button class="btn-gold" style="background:#0088cc;" onclick="window.open('https://t.me/YOUR_USER')">Telegram</button>
+    <div id="screen-history" class="screen">
+        <div class="container">
+            <h3 onclick="goTo('profile')">← عودة</h3>
+            <div class="tab-bar">
+                <div class="tab active" id="tab-deals" onclick="toggleHist('deals')">الصفقات</div>
+                <div class="tab" id="tab-trans" onclick="toggleHist('trans')">المالية</div>
+            </div>
+            <div id="hist-content">
+                <div class="history-item">
+                    <span>XAUUSD (Buy)</span>
+                    <span style="color:var(--green);">+$120.00</span>
+                </div>
+                <div class="history-item">
+                    <span>XAUUSD (Sell)</span>
+                    <span style="color:var(--red);">-$45.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="goTo('main')"><i>📉</i>السوق</div>
+        <div class="nav-item" onclick="goTo('profile')"><i>👤</i>الملف الشخصي</div>
     </div>
 
     <script>
-        function notify(m) {
+        // نظام حفظ الجلسة
+        window.onload = function() {
+            if(localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('screen-login').style.display = 'none';
+            }
+        }
+
+        function login() {
+            const e = document.getElementById('email').value;
+            if(e.includes('@')) {
+                localStorage.setItem('isLoggedIn', 'true');
+                document.getElementById('screen-login').style.display = 'none';
+                notify("مرحباً بك مجدداً");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            location.reload();
+        }
+
+        function notify(msg) {
             const t = document.getElementById('toast');
-            t.innerText = m; t.style.display = 'block';
+            t.innerText = msg; t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 3000);
         }
 
         function goTo(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById('screen-' + id).classList.add('active-screen');
-            const noBack = ['home', 'login', 'signup'];
-            document.getElementById('back-btn').style.display = noBack.includes(id) ? 'none' : 'block';
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(id === 'main') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if(id === 'profile') document.querySelectorAll('.nav-item')[1].classList.add('active');
         }
 
-        function handleLogin() {
-            const e = document.getElementById('l-email').value;
-            if(e.includes('@')) { notify("مرحباً بك مجدداً"); goTo('home'); }
-            else { notify("يرجى كتابة إيميل صحيح"); }
+        function openSection(id) { goTo(id); }
+
+        function copyAddr() {
+            const addr = document.getElementById('addr').innerText;
+            navigator.clipboard.writeText(addr);
+            notify("تم نسخ العنوان! انتبه للتحذير بالأسفل.");
         }
 
-        function handleSignup() { notify("تم إنشاء الحساب بنجاح"); goTo('login'); }
-
-        function doCalc() {
-            const b = document.getElementById('bal').value;
-            const r = document.getElementById('risk').value;
-            if(b && r) document.getElementById('res').innerText = "$" + (b * r / 100).toFixed(2);
+        function toggleHist(type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            if(type === 'deals') {
+                document.getElementById('tab-deals').classList.add('active');
+                document.getElementById('hist-content').innerHTML = `
+                    <div class="history-item"><span>BTC/USD</span><span style="color:var(--green);">+$340.00</span></div>
+                    <div class="history-item"><span>XAUUSD</span><span style="color:var(--red);">-$12.00</span></div>
+                `;
+            } else {
+                document.getElementById('tab-trans').classList.add('active');
+                document.getElementById('hist-content').innerHTML = `
+                    <div class="history-item"><span>إيداع USDT</span><span>+$500.00</span></div>
+                    <div class="history-item"><span>سحب أرباح</span><span>-$200.00</span></div>
+                `;
+            }
         }
     </script>
 </body>
