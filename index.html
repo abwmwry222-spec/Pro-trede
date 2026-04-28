@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ProTrader Elite | برو تريد المطور</title>
+    <title>ProTrader Elite | النسخة المحدثة</title>
     <style>
-        :root { --gold: #FFD700; --bg: #050505; --card: #121212; --text: #e0e0e0; --error: #ff4444; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        :root { --gold: #FFD700; --bg: #050505; --card: #121212; --text: #e0e0e0; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         
-        /* نظام الإشعارات الاحترافي */
         #notification {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(30, 30, 30, 0.9); border: 1px solid var(--gold);
+            background: rgba(30, 30, 30, 0.95); border: 1px solid var(--gold);
             padding: 12px 25px; border-radius: 30px; display: none; z-index: 5000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 0.9rem;
+            box-shadow: 0 5px 20px rgba(255,215,0,0.2); font-size: 0.9rem; color: var(--gold);
         }
 
         #back-btn { 
@@ -22,32 +21,26 @@
             display: none; z-index: 3000;
         }
 
-        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        .active-screen { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; padding: 20px; box-sizing: border-box; overflow-y: auto; background: var(--bg); }
+        .active-screen { display: block; }
 
-        .auth-card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid #222; text-align: center; margin-top: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        h1 { color: var(--gold); margin-bottom: 25px; text-shadow: 0 0 15px var(--gold); }
+        .auth-card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid #222; text-align: center; margin-top: 40px; }
+        h1 { color: var(--gold); margin-bottom: 25px; font-size: 2rem; }
 
         input { 
             width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; 
             border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box;
-            outline: none; transition: 0.3s;
+            outline: none; font-size: 1rem;
         }
-        input:focus { border-color: var(--gold); }
 
         .btn-gold { 
             width: 100%; background: var(--gold); color: black; border: none; 
             padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-size: 1rem; margin-top: 15px;
+            font-size: 1.1rem; margin-top: 15px;
         }
 
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .menu-item { background: var(--card); border: 1px solid #222; padding: 25px 10px; border-radius: 20px; text-align: center; cursor: pointer; }
-        
-        .time-bar { display: flex; justify-content: space-around; margin-bottom: 20px; background: #111; padding: 10px; border-radius: 12px; }
-        .t-btn { background: none; border: 1px solid #333; color: var(--gold); padding: 6px 14px; border-radius: 8px; }
-        .t-btn.active { background: var(--gold); color: black; }
     </style>
 </head>
 <body>
@@ -58,11 +51,12 @@
     <div id="screen-auth" class="screen active-screen">
         <div class="auth-card">
             <h1>PRO TRADER</h1>
+            <p style="color: #888;">تسجيل الدخول للمحترفين</p>
             <input type="email" id="login-email" placeholder="البريد الإلكتروني">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn-gold" onclick="handleLogin()">تسجيل الدخول</button>
-            <p style="font-size: 0.85rem; margin-top: 25px; color: #888;">
-                مستخدم جديد؟ <span onclick="showScreen('screen-signup')" style="color: var(--gold); cursor: pointer;">إنشاء حساب</span>
+            <button class="btn-gold" onclick="handleLogin()">دخول</button>
+            <p style="font-size: 0.9rem; margin-top: 25px;">
+                ليس لديك حساب؟ <span onclick="showScreen('screen-signup')" style="color: var(--gold); cursor: pointer; text-decoration: underline;">إنشاء حساب جديد</span>
             </p>
         </div>
     </div>
@@ -73,47 +67,34 @@
             <input type="text" placeholder="الاسم الكامل">
             <input type="email" id="reg-email" placeholder="البريد الإلكتروني الجديد">
             <input type="password" id="reg-pass" placeholder="كلمة المرور">
-            <button class="btn-gold" onclick="handleSignup()">إتمام التسجيل</button>
-            <p style="font-size: 0.85rem; margin-top: 20px;" onclick="showScreen('screen-auth')">لديك حساب؟ <span style="color: var(--gold);">دخول</span></p>
+            <button class="btn-gold" onclick="handleSignup()">تأكيد التسجيل</button>
+            <p style="margin-top: 20px;" onclick="showScreen('screen-auth')">بالفعل لدي حساب؟ <span style="color: var(--gold);">دخول</span></p>
         </div>
     </div>
 
     <div id="screen-home" class="screen">
         <header style="text-align: center; padding: 20px;">
-            <h2 style="margin:0;">منصة التداول</h2>
-            <small style="color:var(--gold);">حساب محترف نشط ✅</small>
+            <h1 style="font-size: 1.5rem;">لوحة التحكم</h1>
+            <div style="color: #4CAF50; font-size: 0.8rem;">● النظام متصل وجاهز</div>
         </header>
         <div class="menu-grid">
-            <div class="menu-item" onclick="showScreen('screen-chart')">📉<br>تحليل السوق</div>
-            <div class="menu-item" onclick="showScreen('screen-calc')">🧮<br>إدارة المخاطر</div>
+            <div class="menu-item" onclick="showScreen('screen-chart')">📉<br>السوق</div>
+            <div class="menu-item" onclick="showScreen('screen-calc')">🧮<br>الحاسبة</div>
             <div class="menu-item" onclick="showScreen('screen-sig')">🔔<br>التوصيات</div>
-            <div class="menu-item" onclick="showScreen('screen-contact')">🎧<br>الدعم الفني</div>
+            <div class="menu-item" onclick="showScreen('screen-contact')">🎧<br>الدعم</div>
         </div>
     </div>
 
-    <div id="screen-chart" class="screen">
-        <h2>حركة الشموع</h2>
-        <div class="time-bar">
-            <button class="t-btn active" onclick="updateT(this, '1m')">1m</button>
-            <button class="t-btn" onclick="updateT(this, '5m')">5m</button>
-            <button class="t-btn" onclick="updateT(this, '15m')">15m</button>
-        </div>
-        <div style="height:200px; background:#000; border:1px solid #333; border-radius:15px; display:flex; align-items:center; justify-content:center;">
-            <span id="chart-info" style="color:#4CAF50">جاري الاتصال بالسيرفر (1m)...</span>
-        </div>
-    </div>
-
+    <div id="screen-chart" class="screen"><h2>حركة السوق</h2><p>بيانات حية...</p></div>
     <div id="screen-calc" class="screen">
-        <h2>حاسبة إدارة المحفظة</h2>
-        <input type="number" id="balance" placeholder="الرصيد الكلي $">
-        <input type="number" id="risk" placeholder="نسبة المخاطرة %">
-        <div id="calc-res" style="text-align:center; color:var(--gold); font-size:1.5rem; margin-top:20px;">$0.00</div>
+        <h2>حاسبة المخاطرة</h2>
+        <input type="number" id="balance" placeholder="الرصيد $">
+        <input type="number" id="risk" placeholder="المخاطرة %">
+        <h2 id="calc-res" style="text-align:center; color:var(--gold);">$0.00</h2>
     </div>
-
     <div id="screen-contact" class="screen">
-        <h2>الدعم المباشر</h2>
-        <a href="https://t.me/YOUR_USER" class="btn-gold" style="display: block; text-align: center; text-decoration: none;">تليجرام المطور</a>
-        <a href="https://wa.me/YOUR_PHONE" class="btn-gold" style="display: block; text-align: center; text-decoration: none; background:#25D366; margin-top:10px;">واتساب</a>
+        <h2>تواصل معنا</h2>
+        <a href="https://t.me/YOUR_USER" class="btn-gold" style="display:block; text-align:center; text-decoration:none;">Telegram</a>
     </div>
 
     <script>
@@ -133,26 +114,22 @@
 
         function handleLogin() {
             const e = document.getElementById('login-email').value;
-            const p = document.getElementById('login-pass').value;
-            if(e.includes('@') && p.length >= 4) {
-                notify("تم تسجيل الدخول بنجاح");
+            if(e.includes('@')) {
+                notify("تم الدخول بنجاح");
                 showScreen('screen-home');
-            } else { notify("خطأ: يرجى إدخال إيميل وكلمة سر صحيحة"); }
+            } else {
+                notify("خطأ: يرجى كتابة إيميل صحيح يحتوي على @");
+            }
         }
 
         function handleSignup() {
             const e = document.getElementById('reg-email').value;
             if(e.includes('@')) {
-                notify("تم إنشاء الحساب بنجاح، يمكنك الدخول");
+                notify("تم إنشاء حسابك! سجل دخولك الآن");
                 showScreen('screen-auth');
-            } else { notify("يرجى كتابة إيميل صحيح"); }
-        }
-
-        function updateT(btn, f) {
-            document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('chart-info').innerText = "تحليل مباشر: " + f;
-            notify("تم التبديل للإطار الزمني: " + f);
+            } else {
+                notify("يرجى إدخال بريد إلكتروني صالح");
+            }
         }
 
         document.addEventListener('input', () => {
