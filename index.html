@@ -3,96 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ProTrader Sovereign Elite</title>
+    <title>ProTrader Elite | v3.0</title>
     <style>
         :root { --gold: #FFD700; --bg: #050505; --card: #121212; --text: #ffffff; --red: #ff4d4d; --green: #00ff88; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow: hidden; }
 
         #toast { 
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
             background: rgba(20, 20, 20, 0.95); border: 1px solid var(--gold);
             padding: 12px 25px; border-radius: 50px; display: none; z-index: 10000;
             color: var(--gold); font-size: 14px; text-align: center; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
-        /* القائمة السفلية المطورة */
+        /* القائمة السفلية */
         .bottom-nav { 
             position: fixed; bottom: 0; width: 100%; background: rgba(10, 10, 10, 0.95);
-            display: flex; justify-content: space-around; align-items: center; padding: 10px 0;
+            display: flex; justify-content: space-around; align-items: center; padding: 15px 0;
             border-top: 1px solid #222; z-index: 9000; backdrop-filter: blur(15px);
         }
-        .nav-item { text-align: center; cursor: pointer; font-size: 11px; color: #888; flex: 1; }
+        .nav-item { text-align: center; cursor: pointer; font-size: 12px; color: #888; flex: 1; }
         .nav-item.active { color: var(--gold); }
-        .trade-center { flex: 2; display: flex; gap: 5px; justify-content: center; }
-        .trade-btn { padding: 10px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+
+        /* منطقة التداول المرفوعة للأعلى */
+        .trade-panel {
+            position: fixed; bottom: 85px; width: 90%; left: 5%;
+            display: flex; gap: 10px; justify-content: center; align-items: center;
+            z-index: 9500; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 15px;
+        }
+        .trade-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 15px; }
         .buy { background: var(--green); color: #000; }
         .sell { background: var(--red); color: #fff; }
+        .lot-input { width: 70px; padding: 10px; background: #1a1a1a; color: var(--gold); border: 1px solid var(--gold); border-radius: 8px; text-align: center; font-weight: bold; }
 
-        .screen { display: none; height: 100vh; width: 100%; position: absolute; top: 0; background: var(--bg); overflow-y: auto; padding-bottom: 100px; }
+        .screen { display: none; height: 100vh; width: 100%; position: absolute; top: 0; background: var(--bg); overflow-y: auto; padding-bottom: 150px; }
         .active-screen { display: block; }
 
-        /* شاشة الشارت والأسعار */
-        .ticker-wrap { position: absolute; top: 0; width: 100%; background: rgba(0,0,0,0.7); z-index: 100; font-size: 10px; padding: 5px; overflow: hidden; white-space: nowrap; border-bottom: 1px solid #222; }
-        .ticker { display: inline-block; animation: marquee 20s linear infinite; color: var(--gold); }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* العناصر المالية والإدارية */
         .container { padding: 20px; max-width: 500px; margin: auto; }
         .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
         .btn-gold { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* خط الصفقة على الشارت */
-        #trade-line { position: absolute; left: 0; width: 100%; height: 2px; border-top: 1px dashed var(--gold); display: none; z-index: 50; }
+        /* السجلات */
+        .tab-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab { flex: 1; padding: 10px; text-align: center; background: #1a1a1a; border-radius: 8px; cursor: pointer; font-size: 13px; }
+        .tab.active { background: var(--gold); color: #000; }
+        .history-item { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; font-size: 13px; }
 
-        #screen-login { z-index: 10001; background: var(--bg); }
+        #screen-login { z-index: 10001; }
     </style>
 </head>
 <body>
 
     <div id="toast"></div>
 
-    <div class="ticker-wrap" id="ticker-bar">
-        <div class="ticker">BTC: $64,231.50 (+1.2%) | ETH: $3,450.20 (-0.5%) | SOL: $145.10 (+3.1%) | XAUUSD: $2,341.20 | BNB: $580.40</div>
-    </div>
-
-    <div id="trade-line"></div>
-
     <div id="screen-login" class="screen">
         <div class="container" style="margin-top:100px; text-align:center;">
             <h1 style="color:var(--gold);">PRO TRADER</h1>
             <input type="email" id="email" placeholder="البريد الإلكتروني" style="width:100%; padding:15px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:10px;">
             <input type="password" id="pass" placeholder="كلمة المرور" style="width:100%; padding:15px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:10px;">
-            <button class="btn-gold" onclick="login()">دخول آمن</button>
+            <button class="btn-gold" onclick="login()">دخول المنصة</button>
         </div>
     </div>
 
     <div id="screen-main" class="screen active-screen" style="padding:0; overflow:hidden;">
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=1&theme=dark" width="100%" height="100%" frameborder="0"></iframe>
+        
+        <div class="trade-panel" id="trade-ui">
+            <button class="trade-btn sell" onclick="actionTrade('SELL')">SELL</button>
+            <input type="number" id="lot" value="0.01" step="0.01" class="lot-input">
+            <button class="trade-btn buy" onclick="actionTrade('BUY')">BUY</button>
+        </div>
     </div>
 
     <div id="screen-profile" class="screen">
         <div class="container">
             <h2 style="color:var(--gold);">الملف الشخصي</h2>
-            <div class="card" onclick="goTo('deposit')">💰 إيداع (USDT/TRC20)</div>
-            <div class="card" onclick="goTo('kyc')">🆔 توثيق الهوية (KYC)</div>
-            <div class="card" onclick="goTo('referral')">👥 دعوة الأصدقاء (Referral)</div>
-            <div class="card" onclick="goTo('history')">📜 السجل المالي والصفقات</div>
-            <button class="btn-gold" style="background:var(--red); color:white;" onclick="logout()">خروج</button>
-        </div>
-    </div>
-
-    <div id="screen-referral" class="screen">
-        <div class="container">
-            <h3 onclick="goTo('profile')">← عودة</h3>
-            <div class="card">
-                <h4>برنامج الإحالة</h4>
-                <p style="font-size:12px; color:#aaa;">احصل على 10% عمولة من كل إيداع يقوم به صديقك.</p>
-                <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px dashed var(--gold); display:flex; justify-content:space-between; align-items:center;">
-                    <span id="ref-link">protrader.link/ref?u=222</span>
-                    <button onclick="copyRef()" style="background:var(--gold); border:none; padding:5px 10px; border-radius:5px; font-weight:bold;">نسخ</button>
-                </div>
-            </div>
+            <div class="card" onclick="goTo('deposit')">💰 إيداع (USDT)</div>
+            <div class="card" onclick="goTo('withdraw')">📤 سحب أرباح</div>
+            <div class="card" onclick="goTo('history')">📜 سجل العمليات والصفقات</div>
+            <div class="card" onclick="goTo('referral')">👥 نظام الإحالة</div>
+            <button class="btn-gold" style="background:var(--red); color:white;" onclick="logout()">تسجيل الخروج</button>
         </div>
     </div>
 
@@ -100,24 +90,46 @@
         <div class="container">
             <h3 onclick="goTo('profile')">← عودة</h3>
             <div class="card">
-                <p>عنوان المحفظة USDT</p>
-                <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid var(--gold); display:flex; justify-content:space-between;">
-                    <span id="wallet-addr">TYv2p9M7JvW9uW2qS...</span>
-                    <button onclick="copyWallet()" style="color:var(--gold); background:none; border:none; font-weight:bold;">نسخ</button>
+                <p>عنوان محفظة الإيداع (USDT - TRC20)</p>
+                <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px dashed var(--gold); display:flex; justify-content:space-between; align-items:center;">
+                    <span id="dep-addr" style="font-size:12px;">TYv2p9M7JvW9uW2qS5x8...</span>
+                    <button onclick="copy('dep-addr')" style="background:var(--gold); border:none; padding:5px 10px; border-radius:5px; font-weight:bold;">نسخ</button>
                 </div>
-                <p style="color:var(--red); font-size:10px; margin-top:10px;">⚠️ تحذير: إرسال أي عملة أخرى أو استخدام شبكة خطأ يؤدي لفقدان الأموال.</p>
+                <p style="color:var(--red); font-size:11px; margin-top:10px;">⚠️ تحذير: أرسل فقط USDT عبر شبكة TRC20 لتجنب ضياع الأموال.</p>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav" id="main-nav">
-        <div class="nav-item" onclick="goTo('main')">📈 السوق</div>
-        <div class="trade-center">
-            <button class="trade-btn sell" onclick="placeTrade('SELL')">SELL</button>
-            <input type="number" id="lot-size" value="0.01" step="0.01" style="width:50px; background:#1a1a1a; color:var(--gold); border:1px solid #333; text-align:center; border-radius:5px;">
-            <button class="trade-btn buy" onclick="placeTrade('BUY')">BUY</button>
+    <div id="screen-withdraw" class="screen">
+        <div class="container">
+            <h3 onclick="goTo('profile')">← عودة</h3>
+            <div class="card">
+                <h4>طلب سحب جديد</h4>
+                <input type="number" id="w-amount" placeholder="المبلغ (USD)" style="width:100%; padding:12px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:8px;">
+                <input type="text" id="w-addr" placeholder="عنوان محفظتك (TRC20)" style="width:100%; padding:12px; margin:10px 0; background:#1a1a1a; border:1px solid #333; color:white; border-radius:8px;">
+                <button class="btn-gold" onclick="processWithdraw()">تأكيد السحب</button>
+                <p style="font-size:10px; color:#666; margin-top:10px;">* تتم معالجة السحوبات خلال 24 ساعة عمل.</p>
+            </div>
         </div>
-        <div class="nav-item" onclick="goTo('profile')">👤 ملفي</div>
+    </div>
+
+    <div id="screen-history" class="screen">
+        <div class="container">
+            <h3 onclick="goTo('profile')">← عودة</h3>
+            <div class="tab-bar">
+                <div class="tab active" id="tab-deals" onclick="switchHist('deals')">سجل الصفقات</div>
+                <div class="tab" id="tab-fin" onclick="switchHist('fin')">سجل المالية</div>
+            </div>
+            <div id="hist-list">
+                <div class="history-item"><span>GOLD (BUY)</span><span style="color:var(--green);">+$45.20</span></div>
+                <div class="history-item"><span>GOLD (SELL)</span><span style="color:var(--red);">-$12.00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="goTo('main')">📈 السوق</div>
+        <div class="nav-item" onclick="goTo('profile')">👤 الملف الشخصي</div>
     </div>
 
     <script>
@@ -129,7 +141,7 @@
         function login() {
             localStorage.setItem('isLoggedIn', 'true');
             document.getElementById('screen-login').style.display = 'none';
-            notify("تم تسجيل الدخول بنجاح");
+            notify("تم تسجيل الدخول");
         }
 
         function logout() {
@@ -146,28 +158,45 @@
         function goTo(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById('screen-' + id).classList.add('active-screen');
-            document.getElementById('ticker-bar').style.display = (id === 'main') ? 'block' : 'none';
+            document.getElementById('trade-ui').style.display = (id === 'main') ? 'flex' : 'none';
         }
 
-        function placeTrade(type) {
-            const lot = document.getElementById('lot-size').value;
-            const line = document.getElementById('trade-line');
-            line.style.display = 'block';
-            line.style.top = (window.innerHeight / 2) + "px";
-            line.style.borderColor = (type === 'BUY') ? 'var(--green)' : 'var(--red)';
-            notify(`تم فتح صفقة ${type} بحجم ${lot} لوت`);
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            notify("تم النسخ بنجاح");
         }
 
-        function copyRef() {
-            const link = document.getElementById('ref-link').innerText;
-            navigator.clipboard.writeText(link);
-            notify("تم نسخ رابط الإحالة بنجاح!");
+        function actionTrade(type) {
+            const lot = document.getElementById('lot').value;
+            notify(`تم فتح صفقة ${type} لوت: ${lot}`);
         }
 
-        function copyWallet() {
-            const addr = document.getElementById('wallet-addr').innerText;
-            navigator.clipboard.writeText(addr);
-            notify("تم نسخ عنوان المحفظة");
+        function processWithdraw() {
+            const amt = document.getElementById('w-amount').value;
+            const adr = document.getElementById('w-addr').value;
+            if(amt > 0 && adr.length > 10) {
+                notify("تم استلام طلب السحب.. جاري المراجعة");
+            } else {
+                notify("يرجى التأكد من البيانات");
+            }
+        }
+
+        function switchHist(type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            if(type === 'deals') {
+                document.getElementById('tab-deals').classList.add('active');
+                document.getElementById('hist-list').innerHTML = `
+                    <div class="history-item"><span>BTC/USD (Buy)</span><span style="color:var(--green);">+$210.00</span></div>
+                    <div class="history-item"><span>XAUUSD (Sell)</span><span style="color:var(--red);">-$15.50</span></div>
+                `;
+            } else {
+                document.getElementById('tab-fin').classList.add('active');
+                document.getElementById('hist-list').innerHTML = `
+                    <div class="history-item"><span>إيداع USDT</span><span>+$1,000.00</span></div>
+                    <div class="history-item"><span>طلب سحب</span><span style="color:#888;">جاري المعالجة</span></div>
+                `;
+            }
         }
     </script>
 </body>
